@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ROBUX GIVEAWAY!</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(135deg, #4f4f4f, #888);
+        font-family: Arial, sans-serif;
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+
+    /* Welcome Screen */
+    .welcome-screen {
+        position: absolute;
+        top: 0; 
+        left: 0;
+        width: 100%; 
+        height: 100%;
+        background: url('unnamed.png') center center / cover no-repeat;
+        z-index: 9999;
+        opacity: 1;
+        transition: opacity 1s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .welcome-screen::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 1;
+    }
+
+    .welcome-screen h1 {
+        position: relative;
+        z-index: 2;
+        color: #fff;
+        font-size: 32px;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px #000;
+        text-transform: uppercase;
+        text-align: center;
+        padding: 20px 40px;
+        background: rgba(0,0,0,0.3);
+        border-radius: 10px;
+    }
+
+    .welcome-screen.hide {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* Main Card */
+    .card {
+        background: #fff;
+        width: 500px; 
+        border-radius: 20px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        padding: 40px; 
+        text-align: center;
+        position: relative;
+        z-index: 10;
+        opacity: 0; /* Start hidden */
+        transition: opacity 1s ease;
+    }
+
+    .card-img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin: 0 auto -50px auto;
+        position: relative;
+        top: -50px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        background: #fff;
+    }
+
+    .card-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    h2 {
+        margin-top: 60px; 
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+        text-transform: uppercase;
+        margin-bottom: 30px;
+    }
+
+    .username-bar {
+        background: #2375f2;
+        padding: 15px; 
+        border-radius: 4px;
+        margin-bottom: 30px;
+        color: #fff;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .username-bar img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .username-bar input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        font-size: 20px;
+        color: #fff;
+        padding: 0;
+        border-radius: 0;
+        outline: none;
+        text-align: center;
+    }
+
+    .username-bar input::placeholder {
+        color: #fff;
+        opacity: 1;
+        letter-spacing: 1px;
+    }
+
+    .platforms {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 40px; 
+    }
+
+    .platform-btn {
+        display: inline-block;
+        position: relative;
+        width: 80px;  
+        height: 60px;
+        cursor: pointer;
+    }
+
+    .platform-btn input {
+        display: none;
+    }
+
+    .platform-content {
+        width: 100%;
+        height: 100%;
+        background: #2375f2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        clip-path: polygon(0% 0%, 100% 0%, 90% 100%, 10% 100%);
+        transition: transform 0.1s ease;
+        box-shadow: 0 2px 0 #000;
+    }
+
+    .platform-btn:hover .platform-content {
+        background: #1d65cf;
+    }
+
+    .platform-btn:active .platform-content {
+        transform: translateY(2px);
+        box-shadow: none;
+    }
+
+    .platform-btn input[type="radio"]:checked ~ .platform-content {
+        background: #ff0;
+        color: #000;
+    }
+
+    .platform-content img {
+        width: 50%;
+        height: auto;
+    }
+
+    .proceed-btn {
+        display: inline-block;
+        background: #ff0;
+        color: #000;
+        font-weight: bold;
+        font-size: 24px; 
+        padding: 14px 30px; 
+        text-decoration: none;
+        cursor: pointer;
+        clip-path: polygon(10% 0%, 90% 0%, 95% 50%, 90% 100%, 10% 100%, 5% 50%);
+        box-shadow: 0 2px 0 #000;
+        transition: transform 0.1s ease;
+        margin-top: 30px;
+        text-transform: uppercase;
+    }
+
+    .proceed-btn:hover {
+        background: #ffe600;
+    }
+
+    .proceed-btn:active {
+        transform: translateY(2px);
+        box-shadow: none;
+    }
+
+    /* Overlay (SEARCHING, SUCCESS, ROBUX SELECTION, LAST STEP) */
+    .overlay {
+        display: none; 
+        position: fixed;
+        top: 0; 
+        left: 0; 
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0,0,0,0.3);
+        z-index: 9999;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    .overlay-content {
+        background: #fff;
+        border-radius: 20px;
+        padding: 30px;
+        position: relative;
+        width: 400px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    .overlay-content h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    .overlay-content .search-box {
+        background: #2375f2;
+        color: #fff;
+        margin: 20px 0;
+        padding: 20px;
+        border-radius: 10px;
+        font-size: 20px;
+        text-transform: uppercase;
+    }
+
+    .overlay-content img {
+        width: 100px; 
+        margin: 20px 0;
+    }
+
+    /* Success */
+    .success-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .success-content h2 {
+        color: #4caf50;
+        font-size: 28px;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+    }
+
+    .success-icon {
+        width: 120px;
+        height: 120px;
+        background: #a5e8a3;
+        border-radius: 50%;
+        border: 5px solid #4caf50;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .success-icon::before {
+        content: "✔";
+        font-size: 60px;
+        color: #fff;
+        font-weight: bold;
+    }
+
+    /* Robux selection */
+    .robux-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    .robux-content h2 {
+        font-size: 28px;
+        font-weight: bold;
+        color: #fff;
+        text-transform: uppercase;
+        margin-bottom: 30px;
+        text-shadow: 1px 1px 2px #000;
+    }
+
+    .selected-amount-box {
+        background: #fff;
+        color: #000;
+        font-size: 26px;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-bottom: 30px;
+        display: inline-block;
+        padding: 20px 30px;
+        border-radius: 10px;
+        border: 3px solid #000;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        text-align: center;
+    }
+
+    .selected-amount-box span {
+        display: block;
+        font-size: 34px;
+        margin-top: 10px;
+    }
+
+    .robux-options {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .robux-option {
+        position: relative;
+        width: 100px;
+        height: 160px;
+        cursor: pointer;
+        perspective: 1000px;
+    }
+
+    .robux-option input {
+        display: none;
+    }
+
+    .robux-bg {
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        clip-path: polygon(0% 0%, 100% 0%, 90% 100%, 10% 100%);
+        box-shadow: 0 4px 0 #000;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: #333;
+        text-align: center;
+        padding: 15px;
+        border-radius: 8px;
+        transition: transform 0.2s, background 0.2s;
+    }
+
+    .robux-option:hover .robux-bg {
+        background: #f0f0f0;
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    .robux-option:active .robux-bg {
+        transform: translateY(2px);
+        box-shadow: none;
+    }
+
+    .robux-option input:checked ~ .robux-bg {
+        background: #ff0;
+        color: #000;
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    .robux-icon {
+        width: 40px;
+        height: 40px;
+        background: url('Robux_2019_Logo_gold.svg.png') no-repeat center center;
+        background-size: contain;
+        margin-bottom: 10px;
+    }
+
+    .robux-amount {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    /* Last step */
+    .last-step-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    .last-step-content h2 {
+        font-size: 32px;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: #fff;
+        margin-bottom: 20px;
+        text-shadow: 1px 1px 2px #000;
+    }
+
+    .last-step-content p {
+        font-size: 20px;
+        color: #fff;
+        margin-bottom: 40px;
+        line-height: 1.4;
+        max-width: 350px;
+        text-shadow: 1px 1px 2px #000;
+    }
+
+    .last-step-card {
+        background: linear-gradient(to right, #2375f2, #2a83ff);
+        clip-path: polygon(10% 0%, 90% 0%, 95% 50%, 90% 100%, 10% 100%, 5% 50%);
+        padding: 20px 40px;
+        color: #fff;
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 30px;
+        text-align: center;
+        box-shadow: 0 4px 0 #000;
+    }
+
+    .lock.proceed-btn {
+        background: #ff0;
+        color: #000;
+        font-weight: bold;
+        font-size: 24px;
+        padding: 14px 30px;
+        text-decoration: none;
+        cursor: pointer;
+        clip-path: polygon(10% 0%, 90% 0%, 95% 50%, 90% 100%, 10% 100%, 5% 50%);
+        box-shadow: 0 2px 0 #000;
+        transition: transform 0.1s ease;
+        text-transform: uppercase;
+    }
+
+    .lock.proceed-btn:hover {
+        background: #ffe600;
+    }
+
+    .lock.proceed-btn:active {
+        transform: translateY(2px);
+        box-shadow: none;
+    }
+</style>
+</head>
+<body>
+
+<div class="welcome-screen" id="welcomeScreen">
+    <h1>Welcome to Skettzi's Robux Giveaway!</h1>
+</div>
+
+<div class="card" id="cardPanel">
+    <div class="card-img">
+        <img src="Skettzi.png" alt="Avatar">
+    </div>
+    <h2>PLEASE ENTER YOUR USERNAME AND SELECT YOUR PLATFORM.</h2>
+    
+    <div class="username-bar">
+        <img src="RobloxLogo.png" alt="Icon">
+        <input type="text" placeholder="YOUR USERNAME..." id="username">
+    </div>
+
+    <div class="platforms">
+        <label class="platform-btn" title="Windows">
+            <input type="radio" name="platform" value="Windows">
+            <span class="platform-content">
+                <img src="Windows_logo_-_2012.png" alt="Windows">
+            </span>
+        </label>
+        
+        <label class="platform-btn" title="Xbox">
+            <input type="radio" name="platform" value="Xbox">
+            <span class="platform-content">
+                <img src="Xbox_one_logo.svg.png" alt="Xbox">
+            </span>
+        </label>
+        
+        <label class="platform-btn" title="Android">
+            <input type="radio" name="platform" value="Android">
+            <span class="platform-content">
+                <img src="android-logo-png-transparent.png" alt="Android">
+            </span>
+        </label>
+        
+        <label class="platform-btn" title="Apple">
+            <input type="radio" name="platform" value="Apple">
+            <span class="platform-content">
+                <img src="Apple_logo_black.svg.png" alt="Apple">
+            </span>
+        </label>
+    </div>
+
+    <a class="proceed-btn" id="proceed">PROCEED</a>
+</div>
+
+<!-- Overlay for searching, success, robux selection, last step -->
+<div class="overlay" id="overlay">
+    <div class="overlay-content" id="overlayContent">
+        <h2 id="overlayTitle">SEARCHING...</h2>
+        <img src="342359.png" alt="Magnifying Glass" id="overlayImage">
+        <div class="search-box" id="searchInfo"></div>
+    </div>
+</div>
+
+<!-- Locked link (hidden initially) -->
+<a href="https://www.mobtrk.link/list/50925" title="ROBUX LINK DOWNLOAD" class="lock proceed-btn" id="verifyNowLink" style="display:none;">VERIFY NOW</a>
+
+<script>
+    let globalUsername = "";
+    let globalPlatform = "";
+    let globalRobuxAmount = "1000 ROBUX"; // Default selected amount
+
+    // Initially hide the main card
+    document.getElementById('cardPanel').style.opacity = '0';
+
+    // After 2 seconds, fade out welcome screen and fade in the card
+    setTimeout(() => {
+        const welcomeScreen = document.getElementById('welcomeScreen');
+        welcomeScreen.classList.add('hide');
+
+        setTimeout(() => {
+            document.getElementById('cardPanel').style.opacity = '1';
+        }, 1000); 
+    }, 2000);
+
+    document.getElementById('proceed').addEventListener('click', function() {
+        const username = document.getElementById('username').value.trim();
+        const platformRadios = document.getElementsByName('platform');
+        let selectedPlatform = '';
+        
+        for (let i = 0; i < platformRadios.length; i++) {
+            if (platformRadios[i].checked) {
+                selectedPlatform = platformRadios[i].value;
+                break;
+            }
+        }
+
+        if (username && selectedPlatform) {
+            globalUsername = username;
+            globalPlatform = selectedPlatform;
+
+            // Hide the card and show searching
+            document.getElementById('cardPanel').style.display = 'none';
+            document.getElementById('searchInfo').textContent = username + " - " + selectedPlatform;
+            document.getElementById('overlay').style.display = 'flex';
+
+            // After 3 seconds of searching
+            setTimeout(function() {
+                showSuccess();
+            }, 3000);
+        } else {
+            alert("Please enter a username and select a platform first.");
+        }
+    });
+
+    function showSuccess() {
+        const overlayContent = document.getElementById('overlayContent');
+        overlayContent.innerHTML = "";
+        overlayContent.classList.add("success-content");
+
+        const successTitle = document.createElement("h2");
+        successTitle.textContent = "SUCCESS!";
+        overlayContent.appendChild(successTitle);
+
+        const icon = document.createElement("div");
+        icon.classList.add("success-icon");
+        overlayContent.appendChild(icon);
+
+        setTimeout(function() {
+            showRobuxSelection();
+        }, 2000);
+    }
+
+    function showRobuxSelection() {
+        const overlayContent = document.getElementById('overlayContent');
+        overlayContent.innerHTML = "";
+        overlayContent.className = "";
+        overlayContent.classList.add("robux-content");
+
+        const title = document.createElement("h2");
+        title.textContent = "SELECT THE AMOUNT OF ROBUX";
+        overlayContent.appendChild(title);
+
+        const selectedBox = document.createElement("div");
+        selectedBox.classList.add("selected-amount-box");
+        selectedBox.innerHTML = 'SELECTED AMOUNT <span id="selectedAmountText">1000 ROBUX</span>';
+        overlayContent.appendChild(selectedBox);
+
+        const robuxOptions = document.createElement("div");
+        robuxOptions.classList.add("robux-options");
+        overlayContent.appendChild(robuxOptions);
+
+        const amounts = [
+            {value: "1000", label: "1000 ROBUX"},
+            {value: "2800", label: "2800 ROBUX"},
+            {value: "5000", label: "5000 ROBUX"},
+            {value: "13500", label: "13500 ROBUX"},
+        ];
+
+        amounts.forEach((amt, index) => {
+            const optionLabel = document.createElement("label");
+            optionLabel.classList.add("robux-option");
+
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.name = "robuxAmount";
+            input.value = amt.value;
+            if (index === 0) input.checked = true;
+            input.addEventListener('change', function() {
+                document.getElementById('selectedAmountText').textContent = amt.label;
+                globalRobuxAmount = amt.label;
+            });
+            optionLabel.appendChild(input);
+
+            const bg = document.createElement("div");
+            bg.classList.add("robux-bg");
+            const icon = document.createElement("div");
+            icon.classList.add("robux-icon");
+            bg.appendChild(icon);
+
+            const amountText = document.createElement("div");
+            amountText.classList.add("robux-amount");
+            amountText.textContent = amt.label;
+            bg.appendChild(amountText);
+
+            optionLabel.appendChild(bg);
+            robuxOptions.appendChild(optionLabel);
+        });
+
+        const proceedBtn = document.createElement("a");
+        proceedBtn.textContent = "PROCEED";
+        proceedBtn.classList.add("proceed-btn");
+        proceedBtn.href = "#";
+        proceedBtn.addEventListener('click', showLastStep);
+        overlayContent.appendChild(proceedBtn);
+    }
+
+    function showLastStep() {
+        const overlayContent = document.getElementById('overlayContent');
+        overlayContent.innerHTML = "";
+        overlayContent.className = "";
+        overlayContent.classList.add("last-step-content");
+
+        const title = document.createElement("h2");
+        title.textContent = "LAST STEP";
+        overlayContent.appendChild(title);
+
+        const message = document.createElement("p");
+        message.innerHTML = `HELLO ${globalUsername.toUpperCase()}! YOU ARE ALMOST ABLE TO RECEIVE ${globalRobuxAmount}! PLEASE COMPLETE THE LAST STEP BY CLICKING THE BUTTON BELOW TO CONFIRM YOU'RE NOT A BOT.`;
+        overlayContent.appendChild(message);
+
+        const robuxCard = document.createElement("div");
+        robuxCard.classList.add("last-step-card");
+        robuxCard.innerHTML = `${globalRobuxAmount}`;
+        overlayContent.appendChild(robuxCard);
+
+        const verifyLink = document.getElementById('verifyNowLink');
+        verifyLink.style.display = 'inline-block';
+        overlayContent.appendChild(verifyLink);
+    }
+</script>
+
+<!-- Locker script -->
+<script type="text/javascript" src="https://www.directcpi.com/locker.js?id=51105"></script>
+</body>
+</html>
